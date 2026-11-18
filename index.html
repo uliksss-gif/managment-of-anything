@@ -2,424 +2,970 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#0a0a0c" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#000000" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>NEXUS // Omni-Manager</title>
+  <meta name="apple-mobile-web-app-title" content="NEXUS Pro" />
+  <title>NEXUS Pro // Omni-Manager</title>
   <link rel="manifest" href="manifest.json" />
   <style>
     :root {
-      --bg-primary: #070709;
-      --bg-card: #111116;
-      --bg-input: #181820;
-      --accent: #ef233c;
-      --accent-glow: rgba(239, 35, 60, 0.25);
-      --success: #10b981;
-      --warning: #f59e0b;
-      --text-main: #f3f4f6;
-      --text-muted: #9ca3af;
-      --border: #262630;
-      --radius: 12px;
+      --bg-base: #000000;
+      --bg-elevated: #1c1c1e;
+      --bg-card: #141416;
+      --bg-glass: rgba(28, 28, 30, 0.78);
+      --separator: rgba(255, 255, 255, 0.12);
+      --ios-blue: #0a84ff;
+      --ios-red: #ff453a;
+      --ios-green: #30d158;
+      --ios-orange: #ff9f0a;
+      --ios-purple: #bf5af2;
+      --text-primary: #ffffff;
+      --text-secondary: #8e8e93;
+      --safe-top: env(safe-area-inset-top, 20px);
+      --safe-bottom: env(safe-area-inset-bottom, 20px);
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
     }
 
     body {
-      background-color: var(--bg-primary);
-      color: var(--text-main);
-      padding: 16px;
-      padding-bottom: 80px;
-      max-width: 760px;
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      padding-top: calc(var(--safe-top) + 64px);
+      padding-bottom: calc(var(--safe-bottom) + 95px);
+      max-width: 680px;
       margin: 0 auto;
+      overflow-x: hidden;
     }
 
-    header {
+    /* iOS Frosted Top Navigation Bar */
+    .ios-navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 0.5px solid var(--separator);
+      padding-top: var(--safe-top);
+    }
+
+    .nav-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      height: 54px;
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: center;
-      padding: 12px 0 20px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 20px;
+      padding: 0 18px;
     }
 
-    .brand {
-      font-weight: 800;
-      letter-spacing: 1px;
-      font-size: 1.2rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .brand span {
-      color: var(--accent);
-    }
-
-    .share-btn {
-      background: var(--bg-card);
-      color: var(--text-main);
-      border: 1px solid var(--accent);
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 0 12px var(--accent-glow);
-      transition: 0.2s;
-    }
-
-    .share-btn:active {
-      transform: scale(0.96);
-    }
-
-    /* KPI Grid */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    .kpi-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px;
-    }
-
-    .kpi-label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .kpi-value {
-      font-size: 1.25rem;
+    .nav-title {
+      font-size: 1.15rem;
       font-weight: 700;
-      margin-top: 6px;
+      letter-spacing: -0.3px;
     }
 
-    .val-pos { color: var(--success); }
-    .val-neg { color: var(--accent); }
-
-    /* Navigation Tabs */
-    .tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 18px;
-      overflow-x: auto;
-    }
-
-    .tab {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .tab.active {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-    }
-
-    /* Entry Form */
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px;
-      margin-bottom: 20px;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .form-grid .full {
-      grid-column: span 2;
-    }
-
-    input, select {
-      width: 100%;
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      color: var(--text-main);
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      outline: none;
-    }
-
-    input:focus, select:focus {
-      border-color: var(--accent);
-    }
-
-    .btn-primary {
-      width: 100%;
-      background: var(--accent);
-      color: #fff;
+    .nav-action {
+      color: var(--ios-blue);
+      background: none;
       border: none;
-      padding: 12px;
-      border-radius: 8px;
-      font-weight: 700;
       font-size: 0.95rem;
+      font-weight: 600;
       cursor: pointer;
-      margin-top: 6px;
     }
 
-    /* Ledger List */
-    .ledger-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 14px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      margin-bottom: 10px;
+    /* Views */
+    .view {
+      display: none;
+      padding: 12px 16px;
+      animation: fadeIn 0.22s ease;
     }
 
-    .item-meta h4 {
-      font-size: 0.95rem;
+    .view.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .large-header {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.6px;
       margin-bottom: 4px;
     }
 
-    .badge {
-      font-size: 0.7rem;
-      padding: 2px 8px;
-      border-radius: 4px;
-      background: var(--bg-input);
-      color: var(--text-muted);
-      text-transform: uppercase;
+    .sub-header {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      margin-bottom: 18px;
     }
 
-    .item-right {
+    /* iOS Widget Cards */
+    .widget-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .widget {
+      background: var(--bg-elevated);
+      border-radius: 18px;
+      padding: 16px;
+      border: 0.5px solid var(--separator);
+    }
+
+    .widget.full {
+      grid-column: span 2;
+    }
+
+    .widget-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .widget-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .widget-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .widget-val {
+      font-size: 1.55rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    /* Canvas Chart Card */
+    .chart-container {
+      width: 100%;
+      height: 150px;
+      margin-top: 8px;
+    }
+
+    /* iOS Segmented Control */
+    .segmented {
+      display: flex;
+      background: #2c2c2e;
+      border-radius: 10px;
+      padding: 2px;
+      margin-bottom: 14px;
+    }
+
+    .seg-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      padding: 7px 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .seg-btn.active {
+      background: #636366;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+    }
+
+    /* Search Bar */
+    .ios-search {
+      width: 100%;
+      background: #1c1c1e;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 14px;
+      color: #fff;
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+      outline: none;
+    }
+
+    /* iOS Inset Grouped List */
+    .ios-group {
+      background: var(--bg-elevated);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 0.5px solid var(--separator);
+      margin-bottom: 18px;
+    }
+
+    .ios-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 0.5px solid var(--separator);
+      transition: background 0.15s;
+    }
+
+    .ios-row:last-child {
+      border-bottom: none;
+    }
+
+    .ios-row:active {
+      background: #2c2c2e;
+    }
+
+    .row-left {
       display: flex;
       align-items: center;
       gap: 12px;
+      flex: 1;
+      min-width: 0;
     }
 
-    .delete-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
+    .row-badge-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 1.1rem;
-      cursor: pointer;
+      flex-shrink: 0;
     }
 
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1f2937;
-      color: #fff;
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      border: 1px solid var(--accent);
-      display: none;
-      z-index: 999;
+    .row-info {
+      min-width: 0;
+      flex: 1;
     }
+
+    .row-title {
+      font-size: 0.98rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .row-sub {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .row-right {
+      text-align: right;
+      margin-left: 10px;
+    }
+
+    .row-amount {
+      font-size: 0.98rem;
+      font-weight: 700;
+    }
+
+    .row-tag {
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-weight: 600;
+      display: inline-block;
+      margin-top: 3px;
+    }
+
+    /* Floating Action Button */
+    .fab {
+      position: fixed;
+      right: 20px;
+      bottom: calc(var(--safe-bottom) + 76px);
+      width: 54px;
+      height: 54px;
+      border-radius: 27px;
+      background: var(--ios-blue);
+      color: #fff;
+      border: none;
+      font-size: 1.8rem;
+      font-weight: 400;
+      box-shadow: 0 6px 20px rgba(10, 132, 255, 0.45);
+      cursor: pointer;
+      z-index: 95;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .fab:active {
+      transform: scale(0.92);
+    }
+
+    /* iOS Bottom Tab Bar */
+    .ios-tabbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-glass);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border-top: 0.5px solid var(--separator);
+      padding-bottom: var(--safe-bottom);
+      z-index: 100;
+    }
+
+    .tabbar-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0 4px;
+    }
+
+    .tab-item {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 25%;
+    }
+
+    .tab-item.active {
+      color: var(--ios-blue);
+    }
+
+    .tab-icon {
+      font-size: 1.35rem;
+    }
+
+    /* iOS Slide-Up Sheet Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .ios-sheet {
+      background: #1c1c1e;
+      width: 100%;
+      max-width: 680px;
+      border-top-left-radius: 22px;
+      border-top-right-radius: 22px;
+      padding: 16px 20px calc(var(--safe-bottom) + 24px);
+      animation: slideUp 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .sheet-handle {
+      width: 38px;
+      height: 5px;
+      background: #48484a;
+      border-radius: 3px;
+      margin: 0 auto 14px;
+    }
+
+    .sheet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .ios-input, .ios-select, .ios-textarea {
+      width: 100%;
+      background: #2c2c2e;
+      border: 0.5px solid var(--separator);
+      color: #fff;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .ios-btn-full {
+      width: 100%;
+      background: var(--ios-blue);
+      color: #fff;
+      border: none;
+      padding: 14px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+
+    .ios-btn-danger {
+      background: rgba(255, 69, 58, 0.16);
+      color: var(--ios-red);
+      margin-top: 10px;
+    }
+
+    .c-green { color: var(--ios-green); }
+    .c-red { color: var(--ios-red); }
+    .c-blue { color: var(--ios-blue); }
+    .c-orange { color: var(--ios-orange); }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="brand">⚡ NEXUS <span>MANAGER</span></div>
-    <button class="share-btn" onclick="shareReport()">Share / Export</button>
-  </header>
+  <!-- Top Navigation -->
+  <nav class="ios-navbar">
+    <div class="nav-inner">
+      <div class="nav-title" id="nav-top-title">Overview</div>
+      <button class="nav-action" onclick="shareSummary()">Share Report</button>
+    </div>
+  </nav>
 
-  <section class="kpi-grid">
-    <div class="kpi-card">
-      <div class="kpi-label">Net Balance</div>
-      <div class="kpi-value" id="kpi-net">$0.00</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Total Sales</div>
-      <div class="kpi-value val-pos" id="kpi-sales">$0.00</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Expenses</div>
-      <div class="kpi-value val-neg" id="kpi-expenses">$0.00</div>
-    </div>
-  </section>
+  <!-- VIEW 1: OVERVIEW DASHBOARD -->
+  <main id="view-dashboard" class="view active">
+    <div class="large-header">NEXUS Pro</div>
+    <div class="sub-header" id="current-date-label">Executive Command & Operations</div>
 
-  <div class="tabs">
-    <button class="tab active" onclick="setFilter('ALL', this)">All Records</button>
-    <button class="tab" onclick="setFilter('SALE', this)">Sales (+)</button>
-    <button class="tab" onclick="setFilter('EXPENSE', this)">Expenses (-)</button>
-    <button class="tab" onclick="setFilter('TASK', this)">Operations / Tasks</button>
+    <div class="widget-grid">
+      <div class="widget">
+        <div class="widget-top">
+          <div class="widget-icon" style="background: rgba(48, 209, 88, 0.18); color: var(--ios-green);">$</div>
+          <span class="widget-label">NET PROFIT</span>
+        </div>
+        <div class="widget-val c-green" id="stat-net">$0.00</div>
+      </div>
+
+      <div class="widget">
+        <div class="widget-top">
+          <div class="widget-icon" style="background: rgba(10, 132, 255, 0.18); color: var(--ios-blue);">↗</div>
+          <span class="widget-label">GROSS SALES</span>
+        </div>
+        <div class="widget-val" id="stat-sales">$0.00</div>
+      </div>
+
+      <div class="widget">
+        <div class="widget-top">
+          <div class="widget-icon" style="background: rgba(255, 69, 58, 0.18); color: var(--ios-red);">↘</div>
+          <span class="widget-label">EXPENSES</span>
+        </div>
+        <div class="widget-val c-red" id="stat-expenses">$0.00</div>
+      </div>
+
+      <div class="widget">
+        <div class="widget-top">
+          <div class="widget-icon" style="background: rgba(255, 159, 10, 0.18); color: var(--ios-orange);">⚡</div>
+          <span class="widget-label">ACTIVE ITEMS</span>
+        </div>
+        <div class="widget-val" id="stat-active">0</div>
+      </div>
+
+      <div class="widget full">
+        <div class="widget-top">
+          <span class="widget-label">CASHFLOW ANALYTICS (INCOME VS EXPENSE)</span>
+          <span style="font-size: 0.75rem; color: var(--ios-blue);" id="margin-badge">0% Margin</span>
+        </div>
+        <canvas id="cashflowChart" class="chart-container"></canvas>
+      </div>
+    </div>
+
+    <div class="widget-label" style="margin: 0 0 8px 4px;">RECENT ACTIVITY</div>
+    <div class="ios-group" id="recent-list"></div>
+  </main>
+
+  <!-- VIEW 2: LEDGER & MANAGER -->
+  <main id="view-ledger" class="view">
+    <div class="large-header">Manager</div>
+    <div class="sub-header">Manage Sales, Money, Inventory & Tasks</div>
+
+    <input type="search" class="ios-search" id="search-box" placeholder="Search items, clients, or notes..." oninput="renderLedger()" />
+
+    <div class="segmented">
+      <button class="seg-btn active" onclick="setCategoryFilter('ALL', this)">All</button>
+      <button class="seg-btn" onclick="setCategoryFilter('SALE', this)">Sales</button>
+      <button class="seg-btn" onclick="setCategoryFilter('EXPENSE', this)">Money Out</button>
+      <button class="seg-btn" onclick="setCategoryFilter('INVENTORY', this)">Stock</button>
+      <button class="seg-btn" onclick="setCategoryFilter('TASK', this)">Tasks</button>
+    </div>
+
+    <div class="ios-group" id="full-ledger-list"></div>
+  </main>
+
+  <!-- VIEW 3: TOOLS & DATA -->
+  <main id="view-tools" class="view">
+    <div class="large-header">System & Data</div>
+    <div class="sub-header">Export, Backup & Device Installation</div>
+
+    <div class="widget-label" style="margin: 0 0 8px 4px;">DATA MANAGEMENT</div>
+    <div class="ios-group">
+      <div class="ios-row" onclick="exportCSV()" style="cursor:pointer;">
+        <div class="row-left">
+          <div class="row-badge-icon" style="background: rgba(48, 209, 88, 0.2); color: var(--ios-green);">📊</div>
+          <div class="row-info">
+            <div class="row-title">Export to Excel / CSV</div>
+            <div class="row-sub">Download complete financial & task spreadsheet</div>
+          </div>
+        </div>
+        <span style="color: var(--text-secondary);">›</span>
+      </div>
+
+      <div class="ios-row" onclick="exportJSON()" style="cursor:pointer;">
+        <div class="row-left">
+          <div class="row-badge-icon" style="background: rgba(10, 132, 255, 0.2); color: var(--ios-blue);">💾</div>
+          <div class="row-info">
+            <div class="row-title">Backup Database (JSON)</div>
+            <div class="row-sub">Save portable backup file to share across devices</div>
+          </div>
+        </div>
+        <span style="color: var(--text-secondary);">›</span>
+      </div>
+
+      <div class="ios-row" onclick="resetDemoData()" style="cursor:pointer;">
+        <div class="row-left">
+          <div class="row-badge-icon" style="background: rgba(255, 69, 58, 0.2); color: var(--ios-red);">⚠️</div>
+          <div class="row-info">
+            <div class="row-title c-red">Reset All Data</div>
+            <div class="row-sub">Clear local storage and restore factory defaults</div>
+          </div>
+        </div>
+        <span style="color: var(--text-secondary);">›</span>
+      </div>
+    </div>
+
+    <div class="widget-label" style="margin: 0 0 8px 4px;">INSTALL AS NATIVE APP</div>
+    <div class="widget">
+      <p style="font-size: 0.88rem; line-height: 1.5; color: var(--text-secondary);">
+        <strong style="color:#fff;">iOS (Safari):</strong> Tap the <strong>Share</strong> icon at the bottom of your browser and choose <strong>"Add to Home Screen"</strong>.<br><br>
+        <strong style="color:#fff;">Android (Chrome):</strong> Tap the <strong>⋮ Menu</strong> icon and choose <strong>"Install App"</strong>.
+      </p>
+    </div>
+  </main>
+
+  <!-- Floating Add Button -->
+  <button class="fab" onclick="openModal()" aria-label="Add Entry">+</button>
+
+  <!-- Bottom iOS Tab Bar -->
+  <footer class="ios-tabbar">
+    <div class="tabbar-inner">
+      <button class="tab-item active" onclick="switchTab('dashboard', 'Overview', this)">
+        <span class="tab-icon"></span>
+        <span>Overview</span>
+      </button>
+      <button class="tab-item" onclick="switchTab('ledger', 'Manager', this)">
+        <span class="tab-icon">☰</span>
+        <span>Manager</span>
+      </button>
+      <button class="tab-item" onclick="switchTab('tools', 'System & Data', this)">
+        <span class="tab-icon">⚙</span>
+        <span>Settings</span>
+      </button>
+    </div>
+  </footer>
+
+  <!-- Slide-Up Add / Edit Sheet -->
+  <div class="modal-backdrop" id="entry-modal" onclick="closeModalOnBg(event)">
+    <div class="ios-sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <button class="nav-action" style="color: var(--text-secondary);" onclick="closeModal()">Cancel</button>
+        <strong id="modal-title">New Record</strong>
+        <button class="nav-action" onclick="saveRecord()">Done</button>
+      </div>
+
+      <input type="hidden" id="edit-id" />
+
+      <div class="form-group">
+        <label class="form-label">Category Module</label>
+        <select class="ios-select" id="f-category" onchange="updateFormFields()">
+          <option value="SALE">💰 Sale / Client Revenue</option>
+          <option value="EXPENSE">💳 Business Expense / Cost</option>
+          <option value="INVENTORY">📦 Product / Inventory Stock</option>
+          <option value="TASK">✅ Operation / Project Task</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Title / Client / Product Name</label>
+        <input type="text" class="ios-input" id="f-title" placeholder="e.g., iPhone 16 Pro Bulk Order" required />
+      </div>
+
+      <div class="form-group" id="amount-group">
+        <label class="form-label" id="amount-label">Amount ($ USD)</label>
+        <input type="number" step="0.01" class="ios-input" id="f-amount" placeholder="0.00" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Status / Priority</label>
+        <select class="ios-select" id="f-status">
+          <option value="Completed">Completed / Paid</option>
+          <option value="Pending">Pending / In Progress</option>
+          <option value="High Priority">High Priority / Low Stock</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Notes & Details</label>
+        <textarea class="ios-textarea" id="f-notes" rows="2" placeholder="Optional client phone, SKU, or deadline..."></textarea>
+      </div>
+
+      <button class="ios-btn-full" onclick="saveRecord()">Save to NEXUS</button>
+      <button class="ios-btn-full ios-btn-danger" id="btn-delete" style="display:none;" onclick="deleteCurrentRecord()">Delete Record</button>
+    </div>
   </div>
 
-  <section class="card">
-    <form id="entry-form" class="form-grid">
-      <input type="text" id="title" class="full" placeholder="Item, client, or task description..." required />
-      <select id="type">
-        <option value="SALE">Sale / Income (+)</option>
-        <option value="EXPENSE">Expense / Cost (-)</option>
-        <option value="TASK">Operation / Task</option>
-      </select>
-      <input type="number" id="amount" step="0.01" placeholder="Amount ($0.00)" required />
-      <button type="submit" class="btn-primary full">+ Add Record</button>
-    </form>
-  </section>
-
-  <section id="ledger-list"></section>
-
-  <div id="toast" class="toast"></div>
-
   <script>
-    let records = JSON.parse(localStorage.getItem('nexus_records')) || [
-      { id: 1, title: 'Client Retainer - Web Architecture', type: 'SALE', amount: 1250.00, date: '2026-11-18' },
-      { id: 2, title: 'Cloud Server & API Hosting', type: 'EXPENSE', amount: 140.00, date: '2026-11-18' },
-      { id: 3, title: 'Q4 Inventory Audit', type: 'TASK', amount: 0, date: '2026-11-18' }
+    const DEFAULT_DATA = [
+      { id: 101, category: 'SALE', title: 'Enterprise App Subscription', amount: 2450.00, status: 'Completed', notes: 'Annual contract - Client #402', date: '2026-11-18' },
+      { id: 102, category: 'EXPENSE', title: 'AWS & Cloud Infrastructure', amount: 320.50, status: 'Completed', notes: 'Monthly production server bill', date: '2026-11-17' },
+      { id: 103, category: 'INVENTORY', title: 'MacBook Pro M4 Units', amount: 14, status: 'High Priority', notes: '14 units remaining in Warehouse A', date: '2026-11-16' },
+      { id: 104, category: 'TASK', title: 'Q4 Tax & Profit Audit', amount: 0, status: 'Pending', notes: 'Review all November invoices', date: '2026-11-18' }
     ];
 
-    let currentFilter = 'ALL';
+    let records = JSON.parse(localStorage.getItem('nexus_pro_v2')) || DEFAULT_DATA;
+    let activeFilter = 'ALL';
 
-    function saveAndRender() {
-      localStorage.setItem('nexus_records', JSON.stringify(records));
-      renderKPIs();
-      renderList();
+    const ICONS = {
+      SALE: { icon: '💰', bg: 'rgba(48, 209, 88, 0.18)', color: '#30d158' },
+      EXPENSE: { icon: '💳', bg: 'rgba(255, 69, 58, 0.18)', color: '#ff453a' },
+      INVENTORY: { icon: '📦', bg: 'rgba(255, 159, 10, 0.18)', color: '#ff9f0a' },
+      TASK: { icon: '✅', bg: 'rgba(10, 132, 255, 0.18)', color: '#0a84ff' }
+    };
+
+    function init() {
+      const now = new Date();
+      document.getElementById('current-date-label').textContent = now.toLocaleDateString('en-US', {
+        weekday: 'long', month: 'short', day: 'numeric', year: 'numeric'
+      });
+      refreshAll();
     }
 
-    function renderKPIs() {
-      const sales = records.filter(r => r.type === 'SALE').reduce((sum, r) => sum + r.amount, 0);
-      const expenses = records.filter(r => r.type === 'EXPENSE').reduce((sum, r) => sum + r.amount, 0);
+    function refreshAll() {
+      localStorage.setItem('nexus_pro_v2', JSON.stringify(records));
+      updateStats();
+      drawChart();
+      renderRecent();
+      renderLedger();
+    }
+
+    function updateStats() {
+      const sales = records.filter(r => r.category === 'SALE').reduce((a, b) => a + Number(b.amount), 0);
+      const expenses = records.filter(r => r.category === 'EXPENSE').reduce((a, b) => a + Number(b.amount), 0);
       const net = sales - expenses;
+      const activeCount = records.filter(r => r.status !== 'Completed').length;
 
-      document.getElementById('kpi-sales').textContent = `$${sales.toFixed(2)}`;
-      document.getElementById('kpi-expenses').textContent = `$${expenses.toFixed(2)}`;
-      const netEl = document.getElementById('kpi-net');
-      netEl.textContent = `${net < 0 ? '-' : ''}$${Math.abs(net).toFixed(2)}`;
-      netEl.className = `kpi-value ${net >= 0 ? 'val-pos' : 'val-neg'}`;
+      document.getElementById('stat-sales').textContent = `$${sales.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+      document.getElementById('stat-expenses').textContent = `$${expenses.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+      
+      const netEl = document.getElementById('stat-net');
+      netEl.textContent = `${net < 0 ? '-' : ''}$${Math.abs(net).toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+      netEl.className = `widget-val ${net >= 0 ? 'c-green' : 'c-red'}`;
+
+      document.getElementById('stat-active').textContent = activeCount;
+      const margin = sales > 0 ? Math.round((net / sales) * 100) : 0;
+      document.getElementById('margin-badge').textContent = `${margin}% Net Margin`;
     }
 
-    function renderList() {
-      const list = document.getElementById('ledger-list');
-      list.innerHTML = '';
+    function drawChart() {
+      const canvas = document.getElementById('cashflowChart');
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
 
-      const filtered = currentFilter === 'ALL' 
-        ? records 
-        : records.filter(r => r.type === currentFilter);
+      const sales = records.filter(r => r.category === 'SALE').reduce((a, b) => a + Number(b.amount), 0) || 100;
+      const expenses = records.filter(r => r.category === 'EXPENSE').reduce((a, b) => a + Number(b.amount), 0) || 40;
+      const net = Math.max(0, sales - expenses);
+      const maxVal = Math.max(sales, expenses, 1);
 
-      filtered.forEach(item => {
-        const isPos = item.type === 'SALE';
-        const isExp = item.type === 'EXPENSE';
-        const amountDisplay = item.type === 'TASK' 
-          ? 'ACTIVE' 
-          : `${isPos ? '+' : '-'}$${item.amount.toFixed(2)}`;
-        const colorClass = isPos ? 'val-pos' : (isExp ? 'val-neg' : '');
+      ctx.clearRect(0, 0, rect.width, rect.height);
 
-        const div = document.createElement('div');
-        div.className = 'ledger-item';
-        div.innerHTML = `
-          <div class="item-meta">
-            <h4>${escapeHTML(item.title)}</h4>
-            <span class="badge">${item.type} • ${item.date}</span>
-          </div>
-          <div class="item-right">
-            <strong class="${colorClass}">${amountDisplay}</strong>
-            <button class="delete-btn" onclick="deleteRecord(${item.id})">✕</button>
-          </div>
-        `;
-        list.appendChild(div);
+      const bars = [
+        { label: 'Sales', val: sales, color: '#30d158' },
+        { label: 'Expenses', val: expenses, color: '#ff453a' },
+        { label: 'Net Profit', val: net, color: '#0a84ff' }
+      ];
+
+      const barWidth = 54;
+      const spacing = (rect.width - (bars.length * barWidth)) / (bars.length + 1);
+
+      bars.forEach((b, i) => {
+        const x = spacing + i * (barWidth + spacing);
+        const barHeight = Math.max(12, (b.val / maxVal) * (rect.height - 42));
+        const y = rect.height - barHeight - 22;
+
+        ctx.fillStyle = b.color;
+        ctx.beginPath();
+        ctx.roundRect(x, y, barWidth, barHeight, 8);
+        ctx.fill();
+
+        ctx.fillStyle = '#8e8e93';
+        ctx.font = '600 11px -apple-system, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(b.label, x + barWidth / 2, rect.height - 6);
       });
     }
 
-    document.getElementById('entry-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const title = document.getElementById('title').value.trim();
-      const type = document.getElementById('type').value;
-      const amount = parseFloat(document.getElementById('amount').value) || 0;
+    function createRowHTML(item) {
+      const meta = ICONS[item.category] || ICONS.TASK;
+      let valText = '';
+      let valClass = '';
 
-      records.unshift({
-        id: Date.now(),
-        title,
-        type,
-        amount: Math.abs(amount),
-        date: new Date().toISOString().split('T')[0]
-      });
-
-      e.target.reset();
-      saveAndRender();
-      showToast('Record saved locally');
-    });
-
-    function deleteRecord(id) {
-      records = records.filter(r => r.id !== id);
-      saveAndRender();
-      showToast('Record removed');
-    }
-
-    function setFilter(filter, btn) {
-      currentFilter = filter;
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      btn.classList.add('active');
-      renderList();
-    }
-
-    async function shareReport() {
-      const sales = document.getElementById('kpi-sales').textContent;
-      const expenses = document.getElementById('kpi-expenses').textContent;
-      const net = document.getElementById('kpi-net').textContent;
-
-      const summary = `NEXUS MANAGER SUMMARY\nNet Balance: ${net}\nSales: ${sales} | Expenses: ${expenses}\nRecords: ${records.length}`;
-
-      if (navigator.share) {
-        try {
-          await navigator.share({
-            title: 'NEXUS Manager Report',
-            text: summary,
-            url: window.location.href
-          });
-        } catch (err) {
-          copyToClipboard(summary);
-        }
+      if (item.category === 'SALE') {
+        valText = `+$${Number(item.amount).toFixed(2)}`;
+        valClass = 'c-green';
+      } else if (item.category === 'EXPENSE') {
+        valText = `-$${Number(item.amount).toFixed(2)}`;
+        valClass = 'c-red';
+      } else if (item.category === 'INVENTORY') {
+        valText = `${item.amount} Units`;
+        valClass = 'c-orange';
       } else {
-        copyToClipboard(summary);
+        valText = item.status;
+        valClass = 'c-blue';
+      }
+
+      return `
+        <div class="ios-row" onclick="editRecord(${item.id})" style="cursor:pointer;">
+          <div class="row-left">
+            <div class="row-badge-icon" style="background:${meta.bg};">${meta.icon}</div>
+            <div class="row-info">
+              <div class="row-title">${escapeHTML(item.title)}</div>
+              <div class="row-sub">${escapeHTML(item.notes || item.date)}</div>
+            </div>
+          </div>
+          <div class="row-right">
+            <div class="row-amount ${valClass}">${valText}</div>
+            <span class="row-tag" style="background:${meta.bg}; color:${meta.color};">${item.status}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderRecent() {
+      const container = document.getElementById('recent-list');
+      const slice = records.slice(0, 4);
+      container.innerHTML = slice.length ? slice.map(createRowHTML).join('') : '<div class="ios-row"><span class="row-sub">No records yet. Tap + to add.</span></div>';
+    }
+
+    function renderLedger() {
+      const query = document.getElementById('search-box').value.toLowerCase();
+      const filtered = records.filter(r => {
+        const matchCat = activeFilter === 'ALL' || r.category === activeFilter;
+        const matchText = r.title.toLowerCase().includes(query) || (r.notes && r.notes.toLowerCase().includes(query));
+        return matchCat && matchText;
+      });
+
+      const container = document.getElementById('full-ledger-list');
+      container.innerHTML = filtered.length ? filtered.map(createRowHTML).join('') : '<div class="ios-row"><span class="row-sub">No matching records found.</span></div>';
+    }
+
+    function switchTab(viewName, title, btn) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById(`view-${viewName}`).classList.add('active');
+      document.getElementById('nav-top-title').textContent = title;
+
+      document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      if (viewName === 'dashboard') drawChart();
+    }
+
+    function setCategoryFilter(cat, btn) {
+      activeFilter = cat;
+      document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderLedger();
+    }
+
+    function updateFormFields() {
+      const cat = document.getElementById('f-category').value;
+      const amtGroup = document.getElementById('amount-group');
+      const amtLabel = document.getElementById('amount-label');
+
+      if (cat === 'TASK') {
+        amtGroup.style.display = 'none';
+      } else if (cat === 'INVENTORY') {
+        amtGroup.style.display = 'block';
+        amtLabel.textContent = 'Stock Quantity (Units)';
+      } else {
+        amtGroup.style.display = 'block';
+        amtLabel.textContent = 'Amount ($ USD)';
       }
     }
 
-    function copyToClipboard(text) {
-      navigator.clipboard.writeText(text);
-      showToast('Summary copied to clipboard!');
+    function openModal() {
+      document.getElementById('edit-id').value = '';
+      document.getElementById('modal-title').textContent = 'New Record';
+      document.getElementById('f-category').value = 'SALE';
+      document.getElementById('f-title').value = '';
+      document.getElementById('f-amount').value = '';
+      document.getElementById('f-status').value = 'Completed';
+      document.getElementById('f-notes').value = '';
+      document.getElementById('btn-delete').style.display = 'none';
+      updateFormFields();
+      document.getElementById('entry-modal').classList.add('open');
     }
 
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      toast.textContent = msg;
-      toast.style.display = 'block';
-      setTimeout(() => toast.style.display = 'none', 2500);
+    function editRecord(id) {
+      const item = records.find(r => r.id === id);
+      if (!item) return;
+
+      document.getElementById('edit-id').value = item.id;
+      document.getElementById('modal-title').textContent = 'Edit Record';
+      document.getElementById('f-category').value = item.category;
+      document.getElementById('f-title').value = item.title;
+      document.getElementById('f-amount').value = item.amount;
+      document.getElementById('f-status').value = item.status;
+      document.getElementById('f-notes').value = item.notes || '';
+      document.getElementById('btn-delete').style.display = 'block';
+      updateFormFields();
+      document.getElementById('entry-modal').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('entry-modal').classList.remove('open');
+    }
+
+    function closeModalOnBg(e) {
+      if (e.target.id === 'entry-modal') closeModal();
+    }
+
+    function saveRecord() {
+      const id = document.getElementById('edit-id').value;
+      const category = document.getElementById('f-category').value;
+      const title = document.getElementById('f-title').value.trim();
+      const amount = parseFloat(document.getElementById('f-amount').value) || 0;
+      const status = document.getElementById('f-status').value;
+      const notes = document.getElementById('f-notes').value.trim();
+
+      if (!title) {
+        alert('Please enter a title or description.');
+        return;
+      }
+
+      if (id) {
+        const idx = records.findIndex(r => r.id == id);
+        if (idx > -1) {
+          records[idx] = { ...records[idx], category, title, amount, status, notes };
+        }
+      } else {
+        records.unshift({
+          id: Date.now(),
+          category,
+          title,
+          amount,
+          status,
+          notes,
+          date: new Date().toISOString().split('T')[0]
+        });
+      }
+
+      closeModal();
+      refreshAll();
+    }
+
+    function deleteCurrentRecord() {
+      const id = document.getElementById('edit-id').value;
+      records = records.filter(r => r.id != id);
+      closeModal();
+      refreshAll();
+    }
+
+    async function shareSummary() {
+      const sales = document.getElementById('stat-sales').textContent;
+      const exp = document.getElementById('stat-expenses').textContent;
+      const net = document.getElementById('stat-net').textContent;
+      const text = `NEXUS Pro Executive Report\nNet Profit: ${net}\nSales: ${sales} | Expenses: ${exp}\nTotal Records: ${records.length}`;
+
+      if (navigator.share) {
+        await navigator.share({ title: 'NEXUS Pro Report', text, url: window.location.href }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(text);
+        alert('Executive report copied to clipboard!');
+      }
+    }
+
+    function exportCSV() {
+      const headers = ['ID,Category,Title,Amount,Status,Notes,Date'];
+      const rows = records.map(r => `${r.id},${r.category},"${r.title.replace(/"/g, '""')}",${r.amount},${r.status},"${(r.notes||'').replace(/"/g, '""')}",${r.date}`);
+      downloadFile(headers.concat(rows).join('\n'), 'nexus-pro-export.csv', 'text/csv');
+    }
+
+    function exportJSON() {
+      downloadFile(JSON.stringify(records, null, 2), 'nexus-pro-backup.json', 'application/json');
+    }
+
+    function downloadFile(content, filename, type) {
+      const blob = new Blob([content], { type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+    }
+
+    function resetDemoData() {
+      if (confirm('Reset all records to default demo data?')) {
+        records = [...DEFAULT_DATA];
+        refreshAll();
+      }
     }
 
     function escapeHTML(str) {
-      return str.replace(/[&<>'"]/g, tag => ({
+      return String(str).replace(/[&<>'"]/g, tag => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
       }[tag]));
     }
 
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(() => {});
-    }
-
-    saveAndRender();
+    window.addEventListener('resize', drawChart);
+    init();
   </script>
 </body>
 </html>
