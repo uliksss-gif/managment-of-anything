@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0a0a0c" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>NEXUS // Omni-Manager</title>
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    :root {
+      --bg-primary: #070709;
+      --bg-card: #111116;
+      --bg-input: #181820;
+      --accent: #ef233c;
+      --accent-glow: rgba(239, 35, 60, 0.25);
+      --success: #10b981;
+      --warning: #f59e0b;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --border: #262630;
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      padding: 16px;
+      padding-bottom: 80px;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .brand {
+      font-weight: 800;
+      letter-spacing: 1px;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand span {
+      color: var(--accent);
+    }
+
+    .share-btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--accent);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 0 12px var(--accent-glow);
+      transition: 0.2s;
+    }
+
+    .share-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+    }
+
+    .kpi-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-top: 6px;
+    }
+
+    .val-pos { color: var(--success); }
+    .val-neg { color: var(--accent); }
+
+    /* Navigation Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+      overflow-x: auto;
+    }
+
+    .tab {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .tab.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    /* Entry Form */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .form-grid .full {
+      grid-column: span 2;
+    }
+
+    input, select {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+
+    /* Ledger List */
+    .ledger-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+    }
+
+    .item-meta h4 {
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: var(--bg-input);
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .item-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .delete-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1f2937;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      border: 1px solid var(--accent);
+      display: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">⚡ NEXUS <span>MANAGER</span></div>
+    <button class="share-btn" onclick="shareReport()">Share / Export</button>
+  </header>
+
+  <section class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Net Balance</div>
+      <div class="kpi-value" id="kpi-net">$0.00</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Total Sales</div>
+      <div class="kpi-value val-pos" id="kpi-sales">$0.00</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Expenses</div>
+      <div class="kpi-value val-neg" id="kpi-expenses">$0.00</div>
+    </div>
+  </section>
+
+  <div class="tabs">
+    <button class="tab active" onclick="setFilter('ALL', this)">All Records</button>
+    <button class="tab" onclick="setFilter('SALE', this)">Sales (+)</button>
+    <button class="tab" onclick="setFilter('EXPENSE', this)">Expenses (-)</button>
+    <button class="tab" onclick="setFilter('TASK', this)">Operations / Tasks</button>
+  </div>
+
+  <section class="card">
+    <form id="entry-form" class="form-grid">
+      <input type="text" id="title" class="full" placeholder="Item, client, or task description..." required />
+      <select id="type">
+        <option value="SALE">Sale / Income (+)</option>
+        <option value="EXPENSE">Expense / Cost (-)</option>
+        <option value="TASK">Operation / Task</option>
+      </select>
+      <input type="number" id="amount" step="0.01" placeholder="Amount ($0.00)" required />
+      <button type="submit" class="btn-primary full">+ Add Record</button>
+    </form>
+  </section>
+
+  <section id="ledger-list"></section>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    let records = JSON.parse(localStorage.getItem('nexus_records')) || [
+      { id: 1, title: 'Client Retainer - Web Architecture', type: 'SALE', amount: 1250.00, date: '2026-11-18' },
+      { id: 2, title: 'Cloud Server & API Hosting', type: 'EXPENSE', amount: 140.00, date: '2026-11-18' },
+      { id: 3, title: 'Q4 Inventory Audit', type: 'TASK', amount: 0, date: '2026-11-18' }
+    ];
+
+    let currentFilter = 'ALL';
+
+    function saveAndRender() {
+      localStorage.setItem('nexus_records', JSON.stringify(records));
+      renderKPIs();
+      renderList();
+    }
+
+    function renderKPIs() {
+      const sales = records.filter(r => r.type === 'SALE').reduce((sum, r) => sum + r.amount, 0);
+      const expenses = records.filter(r => r.type === 'EXPENSE').reduce((sum, r) => sum + r.amount, 0);
+      const net = sales - expenses;
+
+      document.getElementById('kpi-sales').textContent = `$${sales.toFixed(2)}`;
+      document.getElementById('kpi-expenses').textContent = `$${expenses.toFixed(2)}`;
+      const netEl = document.getElementById('kpi-net');
+      netEl.textContent = `${net < 0 ? '-' : ''}$${Math.abs(net).toFixed(2)}`;
+      netEl.className = `kpi-value ${net >= 0 ? 'val-pos' : 'val-neg'}`;
+    }
+
+    function renderList() {
+      const list = document.getElementById('ledger-list');
+      list.innerHTML = '';
+
+      const filtered = currentFilter === 'ALL' 
+        ? records 
+        : records.filter(r => r.type === currentFilter);
+
+      filtered.forEach(item => {
+        const isPos = item.type === 'SALE';
+        const isExp = item.type === 'EXPENSE';
+        const amountDisplay = item.type === 'TASK' 
+          ? 'ACTIVE' 
+          : `${isPos ? '+' : '-'}$${item.amount.toFixed(2)}`;
+        const colorClass = isPos ? 'val-pos' : (isExp ? 'val-neg' : '');
+
+        const div = document.createElement('div');
+        div.className = 'ledger-item';
+        div.innerHTML = `
+          <div class="item-meta">
+            <h4>${escapeHTML(item.title)}</h4>
+            <span class="badge">${item.type} • ${item.date}</span>
+          </div>
+          <div class="item-right">
+            <strong class="${colorClass}">${amountDisplay}</strong>
+            <button class="delete-btn" onclick="deleteRecord(${item.id})">✕</button>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    document.getElementById('entry-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = document.getElementById('title').value.trim();
+      const type = document.getElementById('type').value;
+      const amount = parseFloat(document.getElementById('amount').value) || 0;
+
+      records.unshift({
+        id: Date.now(),
+        title,
+        type,
+        amount: Math.abs(amount),
+        date: new Date().toISOString().split('T')[0]
+      });
+
+      e.target.reset();
+      saveAndRender();
+      showToast('Record saved locally');
+    });
+
+    function deleteRecord(id) {
+      records = records.filter(r => r.id !== id);
+      saveAndRender();
+      showToast('Record removed');
+    }
+
+    function setFilter(filter, btn) {
+      currentFilter = filter;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      renderList();
+    }
+
+    async function shareReport() {
+      const sales = document.getElementById('kpi-sales').textContent;
+      const expenses = document.getElementById('kpi-expenses').textContent;
+      const net = document.getElementById('kpi-net').textContent;
+
+      const summary = `NEXUS MANAGER SUMMARY\nNet Balance: ${net}\nSales: ${sales} | Expenses: ${expenses}\nRecords: ${records.length}`;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'NEXUS Manager Report',
+            text: summary,
+            url: window.location.href
+          });
+        } catch (err) {
+          copyToClipboard(summary);
+        }
+      } else {
+        copyToClipboard(summary);
+      }
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text);
+      showToast('Summary copied to clipboard!');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(() => toast.style.display = 'none', 2500);
+    }
+
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+      }[tag]));
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+
+    saveAndRender();
+  </script>
+</body>
+</html>
